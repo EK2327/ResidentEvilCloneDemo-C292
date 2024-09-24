@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float jumpForce;
     [SerializeField] float mouseSensitivity;
     [SerializeField] float verticalLookLimit;
+    [SerializeField] private float maxHealth = 5f;
+
+    private float currentHealth;
     private Boolean isGrounded = true;
     private float xRotation;
 
@@ -23,6 +27,8 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -106,5 +112,13 @@ public class PlayerController : MonoBehaviour
     {
         //GameObject bullet = Instantiate(Projectile, firePoint.position, firePoint.forward);
         //bullet.GetComponent<Rigidbody>().addForce(firePoint.forward * 10, ForceMode.Impulse);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        Debug.Log("Player took Damage: " + damage);
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

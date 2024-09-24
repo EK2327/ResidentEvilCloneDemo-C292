@@ -25,6 +25,18 @@ public class Enemy : MonoBehaviour
         agent.SetDestination(target.position);
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.tag == "Player")
+            collision.transform.GetComponent<PlayerController>().TakeDamage(1 * Time.deltaTime);
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.tag == "Player")
+            collision.transform.GetComponent<PlayerController>().TakeDamage(1 * Time.deltaTime);
+    }
+
     public void TakeDamage(float damage)
     {
         Debug.Log("Zombie took Damage: " + damage);
