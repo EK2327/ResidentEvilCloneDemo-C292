@@ -40,10 +40,6 @@ public class PlayerController : MonoBehaviour
         {
             Jump();
         }
-        if (Input.GetMouseButtonDown(0))
-        {
-            Shoot();
-        }
     }
 
     void LookAround()
@@ -100,7 +96,7 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(firePoint.position, firePoint.forward, out hit, 100))
         {
-            Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 2f);
+            //Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 2f);
             if (hit.transform.CompareTag("Zombie"))
             {
                 hit.transform.GetComponent<Enemy>().TakeDamage(1);
@@ -108,11 +104,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void ShootBullet()
-    {
-        //GameObject bullet = Instantiate(Projectile, firePoint.position, firePoint.forward);
-        //bullet.GetComponent<Rigidbody>().addForce(firePoint.forward * 10, ForceMode.Impulse);
-    }
 
     public void TakeDamage(float damage)
     {

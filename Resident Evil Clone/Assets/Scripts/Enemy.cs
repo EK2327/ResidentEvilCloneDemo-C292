@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        Debug.Log("Zombie took Damage: " + damage);
+        //Debug.Log("Zombie took Damage: " + damage);
         currentHealth -= damage;
         if (currentHealth <= 0)
             Destroy(gameObject);
