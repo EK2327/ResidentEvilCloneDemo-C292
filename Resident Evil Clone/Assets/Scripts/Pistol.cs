@@ -83,7 +83,9 @@ public class Pistol : Weapon
 
             canFire = false;
             cooldownLeft = fireCooldown;
+           
         }
+        UIManager.instance.setCurrentAmmo(currentLoadedAmmo);
         //Debug.Log("Ammo left: " + currentLoadedAmmo);
     }
 
@@ -93,5 +95,7 @@ public class Pistol : Weapon
         base.Reload();
         canFire = false;
         cooldownLeft = reloadCooldown;
+        UIManager.instance.setCurrentAmmo(currentLoadedAmmo);
+        UIManager.instance.setSpareAmmo(currentSpareAmmo);
     }
 }
