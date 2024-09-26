@@ -5,10 +5,12 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour
 {
     [SerializeField] protected int ammoCapacity;
-    [SerializeField] protected int currentLoadedAmmo;
-    [SerializeField] protected int currentSpareAmmo;
     [SerializeField] protected bool canFire;
     [SerializeField] protected Transform firePoint;
+
+    [SerializeField] protected Magazine magazine;
+
+    [SerializeField] public Enums.MagazineType magazineType;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,32 +23,46 @@ public abstract class Weapon : MonoBehaviour
         
     }
 
-    protected virtual void Reload()
+    public virtual void Reload(Magazine newMag)
     {
-        if (currentLoadedAmmo < ammoCapacity && currentSpareAmmo > 0)
+        if (newMag != null)
         {
-            int bulletsToLoad = Mathf.Min(ammoCapacity - currentLoadedAmmo, currentSpareAmmo);
-            currentSpareAmmo -= bulletsToLoad;
-            currentLoadedAmmo += bulletsToLoad;
+            magazine = newMag;
+            UIManager.instance.setCurrentAmmo(magazine.GetRounds());
+
         }
     }
 
-    protected virtual void Fire() 
+    public virtual void Fire() 
     {
-        if (currentLoadedAmmo > 0)
+        if (magazine != null)
         {
-            currentLoadedAmmo--;
-            RaycastHit hit;
-            if (Physics.Raycast(firePoint.position, firePoint.forward, out hit, 500))
+            if (magazine.GetRounds() > 0)
             {
-                Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 2f);
-                if (hit.transform.CompareTag("Zombie"))
+                magazine.RemoveRound();
+
+                RaycastHit hit;
+                if (Physics.Raycast(firePoint.position, firePoint.forward, out hit, 500))
                 {
-                    hit.transform.GetComponent<Enemy>().TakeDamage(1);
+                    Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 2f);
+                    if (hit.transform.CompareTag("Zombie"))
+                    {
+                        hit.transform.GetComponent<Enemy>().TakeDamage(1);
+                    }
+                    UIManager.instance.setCurrentAmmo(magazine.GetRounds());
                 }
             }
-            //GameObject bullet = Instantiate(projectile, firePoint.position, firePoint.forward);
-            //bullet.GetComponent<Rigidbody>().addForce(firePoint.forward * 10, ForceMode.Impulse);
         }
+        
+    }
+
+    public int CheckAmmo()
+    {
+        if (magazine != null)
+        {
+            return magazine.GetRounds();
+        }
+        else
+            return 0;
     }
 }

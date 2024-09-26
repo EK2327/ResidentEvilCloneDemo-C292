@@ -6,9 +6,9 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI currentAmmoText;
-    [SerializeField] TextMeshProUGUI spareAmmoText;
+    [SerializeField] TextMeshProUGUI inventorySizeText;
     public static UIManager instance;
-    
+
     private void Awake()
     {
         instance = this;
@@ -16,13 +16,13 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void setCurrentAmmo(int curAmmo)
@@ -30,8 +30,8 @@ public class UIManager : MonoBehaviour
         currentAmmoText.text = curAmmo.ToString();
     }
 
-    public void setSpareAmmo(int spareAmmo)
+    public void setInventorySize(int size)
     {
-        spareAmmoText.text = spareAmmo.ToString();
+        inventorySizeText.text = size.ToString();
     }
 }

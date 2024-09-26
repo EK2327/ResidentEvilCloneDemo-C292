@@ -18,8 +18,10 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] Transform fpsCamera;
     private Rigidbody rb;
-
     [SerializeField] private Transform firePoint;
+
+    [SerializeField] Weapon currentWeapon;
+    private List<IPickupable> inventory = new List<IPickupable>();
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +31,12 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
 
         currentHealth = maxHealth;
+
+        if (currentWeapon != null)
+        {
+            UIManager.instance.setCurrentAmmo(currentWeapon.CheckAmmo());
+        }
+        UIManager.instance.setInventorySize(inventory.Count);
     }
 
     // Update is called once per frame
@@ -39,6 +47,16 @@ public class PlayerController : MonoBehaviour
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             Jump();
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            currentWeapon.Fire();
+        }
+        if (Input.GetButtonDown("Reload"))
+        {
+            
+            AttemptReload();
+            UIManager.instance.setInventorySize(inventory.Count);
         }
     }
 
@@ -52,6 +70,7 @@ public class PlayerController : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -verticalLookLimit, verticalLookLimit);
         fpsCamera.localRotation = Quaternion.Euler(xRotation, 0, 0);
+        firePoint.localRotation = Quaternion.Euler(xRotation, mouseX, 0);
     }
 
     void MovePlayer() 
@@ -81,6 +100,12 @@ public class PlayerController : MonoBehaviour
         {
             isGrounded = true;
         }
+        else if (collision.gameObject.GetComponent<IPickupable>() != null)
+        {
+            inventory.Add(collision.gameObject.GetComponent<IPickupable>());
+            collision.gameObject.GetComponent<IPickupable>().PickUp(this);
+            UIManager.instance.setInventorySize(inventory.Count);
+        }
     }
 
     private void OnCollisionExit(Collision collision)
@@ -91,25 +116,29 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Shoot()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(firePoint.position, firePoint.forward, out hit, 100))
-        {
-            //Debug.DrawRay(firePoint.position, firePoint.forward * hit.distance, Color.red, 2f);
-            if (hit.transform.CompareTag("Zombie"))
-            {
-                hit.transform.GetComponent<Enemy>().TakeDamage(1);
-            }
-        }
-    }
-
-
     public void TakeDamage(float damage)
     {
         Debug.Log("Player took Damage: " + damage);
         currentHealth -= damage;
         if (currentHealth <= 0)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void AttemptReload()
+    {
+        if (currentWeapon != null)
+        {
+            Enums.MagazineType gunMagType = currentWeapon.magazineType;
+            foreach (Magazine item in inventory)
+            {
+                
+                if (item.GetMagazineType() == gunMagType)
+                {
+                    currentWeapon.Reload(item);
+                    inventory.Remove(item);
+                    break;
+                }
+        }
+        }
     }
 }
