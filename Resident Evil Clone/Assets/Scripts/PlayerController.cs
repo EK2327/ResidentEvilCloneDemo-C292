@@ -141,4 +141,9 @@ public class PlayerController : MonoBehaviour
         }
         }
     }
+
+    public void Heal(float heal)
+    {
+        currentHealth += heal;
+    }
 }
