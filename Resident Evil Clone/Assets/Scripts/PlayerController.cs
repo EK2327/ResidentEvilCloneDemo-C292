@@ -37,6 +37,8 @@ public class PlayerController : MonoBehaviour
             UIManager.instance.setCurrentAmmo(currentWeapon.CheckAmmo());
         }
         UIManager.instance.setInventorySize(inventory.Count);
+        int healthToShow = Mathf.RoundToInt(currentHealth / maxHealth * 100);
+        UIManager.instance.setHealth(healthToShow);
     }
 
     // Update is called once per frame
@@ -102,9 +104,14 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.gameObject.GetComponent<IPickupable>() != null)
         {
-            inventory.Add(collision.gameObject.GetComponent<IPickupable>());
+
             collision.gameObject.GetComponent<IPickupable>().PickUp(this);
-            UIManager.instance.setInventorySize(inventory.Count);
+            if (collision.gameObject.GetComponent<HealthPack>() == null)
+            {
+                inventory.Add(collision.gameObject.GetComponent<IPickupable>());
+                UIManager.instance.setInventorySize(inventory.Count);
+
+            }
         }
     }
 
@@ -122,6 +129,9 @@ public class PlayerController : MonoBehaviour
         currentHealth -= damage;
         if (currentHealth <= 0)
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        int healthToShow = Mathf.RoundToInt(currentHealth / maxHealth * 100);
+        UIManager.instance.setHealth(healthToShow);
     }
 
     public void AttemptReload()
@@ -145,5 +155,11 @@ public class PlayerController : MonoBehaviour
     public void Heal(float heal)
     {
         currentHealth += heal;
+        if ( currentHealth > maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        int healthToShow = Mathf.RoundToInt(currentHealth / maxHealth * 100);
+        UIManager.instance.setHealth(healthToShow);
     }
 }

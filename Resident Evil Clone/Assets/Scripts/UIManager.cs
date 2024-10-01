@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI currentAmmoText;
     [SerializeField] TextMeshProUGUI inventorySizeText;
+    [SerializeField] TextMeshProUGUI healthText;
     public static UIManager instance;
 
     private void Awake()
@@ -33,5 +34,10 @@ public class UIManager : MonoBehaviour
     public void setInventorySize(int size)
     {
         inventorySizeText.text = size.ToString();
+    }
+
+    public void setHealth(float health)
+    {
+        healthText.text = health.ToString();
     }
 }
